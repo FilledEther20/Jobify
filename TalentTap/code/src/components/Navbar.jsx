@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../assets/logo.png';
+import SignUpForm from './SignUpForm';
 const Navbar = () => {
+	const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+	const handleSignUpClick = () => {
+		setIsSignUpOpen(true);
+	};
+
+	const handleCloseSignUpClick = () => {
+		setIsSignUpOpen(false);
+	};
 	return (
 		<nav className="bg-indigo-700 border-b border-indigo-500">
 			<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -24,7 +33,7 @@ const Navbar = () => {
 							<div className="flex space-x-2">
 								<a
 									href="/index.html"
-									className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
+									className="rounded-md py-2 px-2 mt text-white bg-black"
 								>
 									Home
 								</a>
@@ -34,14 +43,16 @@ const Navbar = () => {
 								>
 									Jobs
 								</a>
-								
-								<a
-									href="/index.html"
+
+								<button
+									onClick={handleSignUpClick}
 									className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
 								>
-									All Jobs
-								</a>
-
+									SignUp
+								</button>
+								{isSignUpOpen && (
+									<SignUpForm onClose={handleCloseSignUpClick} />
+								)}
 							</div>
 						</div>
 					</div>

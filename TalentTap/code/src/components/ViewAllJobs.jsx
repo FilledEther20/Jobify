@@ -1,6 +1,7 @@
 import React from 'react'
-
+import  jobsData from '../jobs.json'
 const ViewAllJobs = () => {
+  const remJobs=jobsData.jobs.slice(6)
   return (
     <>
       <div className='text-center'>

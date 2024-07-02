@@ -2,21 +2,14 @@ import React, { useState } from 'react';
 import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { BrowserRouter, Router, Routes, Link } from 'react-router-dom';
-import SignUpForm from './SignUpForm';
 const Navbar = () => {
-	const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-	const navigate = useNavigate();
-	const handleSignUpClick = () => {
-		setIsSignUpOpen(true);
+	const nav=useNavigate();
+	const handleJobsClick = () => {
+		nav('/view-all-jobs');
 	};
 
-	const handleCloseSignUpClick = () => {
-		setIsSignUpOpen(false);
-		navigate('/');
-	};
-
-	const handleJobsClick=()=>{
-		navigate('/view-all-jobs')
+	const handleHomeClick=()=>{
+		nav('/home')
 	}
 	return (
 		<>
@@ -24,10 +17,10 @@ const Navbar = () => {
 				<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
 					<div className="flex h-20 items-center justify-between">
 						<div className="flex flex-1 items-center justify-center md:items-stretch">
-							<a
+							<button
 								className="flex flex-shrink-0
 						items-center mr-4"
-								href="/index.html"
+								onClick={handleHomeClick}
 							>
 								<img
 									className="h-10 w-auto"
@@ -37,32 +30,28 @@ const Navbar = () => {
 								<span className="md:block text-white text-2xl font-bold">
 									Talent$Tap
 								</span>
-							</a>
+							</button>
 							<div className="md:ml-auto">
 								<div className="flex space-x-2">
-									<a
-										href="/index.html"
-										className="rounded-md py-2 px-2 mt text-white bg-black"
+									<button
+										onClick={handleHomeClick}
+										className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
 									>
 										Home
-									</a>
+									</button>
 									<button
-									onClick={handleJobsClick} 
-									className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
+										onClick={handleJobsClick}
+										className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
 									>
 										Jobs
 									</button>
-									<Link to={'/signup'}>
+									<Link to={'/profile'}>
 										<button
-											onClick={handleSignUpClick}
 											className="rounded-md py-2 px-2 mt text-white hover:bg-black contain"
 										>
-											SignUp
+											Profile
 										</button>
 									</Link>
-									{isSignUpOpen && (
-										<SignUpForm onClose={handleCloseSignUpClick} />
-									)}
 								</div>
 							</div>
 						</div>

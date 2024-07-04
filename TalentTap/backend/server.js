@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 // Middleware
 app.use(cors());
@@ -24,9 +24,8 @@ mongoose.connection.on('error', (err) => {
 });
 
 const addJobs=require("./routes/AddJobs(Recruiter)")
-
+//addJob route
 app.use('/addJob',addJobs)
-
 
 app.get('/', (req, res) => {
 	res.send('HI');

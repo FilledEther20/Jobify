@@ -18,7 +18,7 @@ const schema = mongoose.Schema({
 		required: true,
 	},
 	requirements:[String],
-	responsibilites:[String],
+	responsibilities:[String],
 	salary: {
 		type: Number,
 		validate: [

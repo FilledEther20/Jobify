@@ -1,18 +1,32 @@
 import { useState } from 'react';
 import { FaMapMarker } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-const JobCard = ({ id, title, salary, description = ' ', location, type }) => {
+const JobCard = ({
+	id,
+	title,
+	salary,
+	description = ' ',
+	location,
+	type,
+	status,
+}) => {
 	const [showFullDescription, setShowFullDescription] = useState(false);
+	const [currStatus, setCurrStatus] = useState('open'); //used for changing the rendered value of status in the jobcard
 	let desc = description;
+
 	if (!showFullDescription && description) {
 		desc = description.substring(0, 90) + '..';
 	}
+	const handleReadMore = (e) => {
+	};
 	return (
 		<div className="bg-white rounded-xl shadow-md relative">
 			<div className="p-4">
 				<div className="mb-6">
 					<div className="text-gray-600 my-2">{type}</div>
-					<h3 className="text-xl font-bold">{title}</h3>
+					<button onClick={handleReadMore}>
+						{' '}
+						<h3 className="text-xl font-bold">{title}</h3>
+					</button>
 				</div>
 
 				<div className="mb-5">{desc}</div>
@@ -33,12 +47,9 @@ const JobCard = ({ id, title, salary, description = ' ', location, type }) => {
 						<FaMapMarker className="inline text-lg mb-1 mr-1" />
 						{location}
 					</div>
-					<a
-						href="read-more.html"
-						className="h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm"
-					>
-						Read More
-					</a>
+					<div className="h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm">
+						{status}
+					</div>
 				</div>
 			</div>
 		</div>

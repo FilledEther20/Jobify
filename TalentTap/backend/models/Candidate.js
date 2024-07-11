@@ -32,6 +32,10 @@ const candidateSchema = new mongoose.Schema({
 	updatedAt: {
 		type: Date,
 		default: Date.now,
+	},
+	phone:{
+		type:Number,
+
 	}
 });
 

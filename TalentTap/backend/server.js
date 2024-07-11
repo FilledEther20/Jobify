@@ -13,7 +13,7 @@ app.use(express.json());
 // MongoDB Connection
 const URI = process.env.URL;
 
-mongoose.connect(URI );
+mongoose.connect(URI);
 
 mongoose.connection.on('connected', () => {
 	console.log('Connected to MongoDB');
@@ -23,12 +23,18 @@ mongoose.connection.on('error', (err) => {
 	console.error(`MongoDB connection error: ${err}`);
 });
 
-const addJobs=require("./routes/AddJobs(Recruiter)")
+const jobRoutes = require('./controllers/Jobs');
+const candidateRoutes=require('./controllers/Candidate')
 //addJob route
-app.use('/addJob',addJobs)
-
+app.use('/', jobRoutes);
+app.use('/',candidateRoutes)
 app.get('/', (req, res) => {
-	res.send('HI');
+	res.send('HI asde');
+});
+
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).json({ error: err.message || 'Something went wrong !' });
 });
 
 app.listen(PORT, () => {

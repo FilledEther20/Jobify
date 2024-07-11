@@ -19,7 +19,14 @@ const schema = new mongoose.Schema({
 		},
 		required: [true, 'User phone number required'],
 	},
-
+	company:{
+		type:String,
+		required:true
+	},
+	position:{
+		type:String,
+		required:true
+	},
     bio:{
         type:String,
     }

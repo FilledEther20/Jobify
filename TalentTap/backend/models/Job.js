@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const schema = mongoose.Schema({
 	title: {
 		type: String,
@@ -39,6 +38,21 @@ const schema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	status:{
+		type:String,
+		enum:['applied','accepted','rejected','open'],
+		default:'open',
+		required:true,
+	}
 });
+
+schema.set('toJSON',{
+	transform:(document,returnObject)=>{
+		returnObject.id=returnObject._id.toString();
+		delete returnObject._id
+		delete returnObject.__v
+	}
+})
+
 
 module.exports = mongoose.model('Job', schema);

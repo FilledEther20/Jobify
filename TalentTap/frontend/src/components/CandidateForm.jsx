@@ -11,6 +11,13 @@ import {
 	Chip,
 	Box,
 } from '@mui/material';
+import 'react-phone-number-input/style.css';
+import { BaseURL } from '../../constants'; // Ensure this path is correct
+import axios from 'axios';
+import PhoneInput from 'react-phone-number-input';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Login from './Login';
 
 const CandidateForm = () => {
 	const navigate = useNavigate();
@@ -19,16 +26,24 @@ const CandidateForm = () => {
 		institution: '',
 		yearOfCompletion: '',
 	});
+	const [phone, setPhone] = useState('');
 	const [skills, setSkills] = useState([]);
-	const skillOptions = ['JavaScript', 'React', 'Node.js', 'Python', 'Java','Kotlin'];
+	const skillOptions = [
+		'JavaScript',
+		'React',
+		'Node.js',
+		'Python',
+		'Java',
+		'Kotlin',
+	];
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
 		const candidateData = {
 			name: data.get('name'),
 			email: data.get('email'),
-			phone: data.get('phone-number'),
+			phone: phone,
 			education: {
 				degree: data.get('degree'),
 				institution: data.get('institution'),
@@ -36,11 +51,32 @@ const CandidateForm = () => {
 			},
 			skills: skills,
 			password: data.get('password'),
-			confirmPassword: data.get('confirm-password'),
 		};
-		console.log(candidateData);
-		// Submit candidateData to the backend
-		navigate('/home');
+
+		if (data.get('password') !== data.get('confirm-password')) {
+			toast.error("Password confirmation does not match", {
+				position: 'top-center',
+				autoClose: 3000,
+			});
+			return;
+		}
+
+		try {
+			const res = await axios.post(`${BaseURL}/api/signup`, candidateData);
+			if (res.status === 201) {
+				toast.success("Welcome!", {
+					position: 'top-center',
+					autoClose: 4000,
+				});
+				navigate('/home');
+			}
+		} catch (error) {
+			toast.error('User With Email already Exists', {
+				position: 'top-center',
+				autoClose: 3000,
+			});
+			console.error('Error registering user', error);
+		}
 	};
 
 	const handleEducationChange = (event) => {
@@ -49,17 +85,17 @@ const CandidateForm = () => {
 			[event.target.name]: event.target.value,
 		});
 	};
+
 	const handleSkillsChange = (event) => {
 		const val = event.target.value;
 		setSkills(typeof val === 'string' ? val.split(',') : val);
 	};
+
 	return (
 		<div className="w-full bg-white flex items-center justify-center h-full rounded-lg shadow dark:border md:mt-40 sm:max-w-sm lg:p-0 dark:bg-gray-800 dark:border-gray-700">
 			<div className="max-w-md p-6 space-y-4 md:space-y-6 sm:p-8 h-full">
-				<form
-					className="space-y-4 md:space-y-6"
-					onSubmit={handleSubmit}
-				>
+				<ToastContainer />
+				<form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
 					<div className="max-w-md w-full">
 						<label
 							htmlFor="name"
@@ -99,11 +135,10 @@ const CandidateForm = () => {
 						>
 							Phone Number
 						</label>
-						<input
-							type="text"
-							name="phone-number"
-							id="phone-number"
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						<PhoneInput
+							defaultCountry="US"
+							value={phone}
+							onChange={setPhone}
 							placeholder="123-456-7890"
 							required
 						/>
@@ -164,10 +199,7 @@ const CandidateForm = () => {
 					</div>
 					<div>
 						<FormControl fullWidth>
-							<InputLabel
-								id="skills-label"
-								sx={{ color: 'white' }}
-							>
+							<InputLabel id="skills-label" sx={{ color: 'white' }}>
 								Skills
 							</InputLabel>
 							<Select
@@ -176,28 +208,17 @@ const CandidateForm = () => {
 								multiple
 								value={skills}
 								onChange={handleSkillsChange}
-								input={
-									<OutlinedInput
-										id="select-multiple-chip"
-										label="Skills"
-									/>
-								}
+								input={<OutlinedInput id="select-multiple-chip" label="Skills" />}
 								renderValue={(selected) => (
 									<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
 										{selected.map((value) => (
-											<Chip
-												key={value}
-												label={value}
-											/>
+											<Chip key={value} label={value} />
 										))}
 									</Box>
 								)}
 							>
 								{skillOptions.map((skill) => (
-									<MenuItem
-										key={skill}
-										value={skill}
-									>
+									<MenuItem key={skill} value={skill}>
 										{skill}
 									</MenuItem>
 								))}
@@ -225,7 +246,7 @@ const CandidateForm = () => {
 							htmlFor="confirm-password"
 							className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 						>
-							Confirm password
+							Confirm Password
 						</label>
 						<input
 							type="password"
@@ -239,13 +260,20 @@ const CandidateForm = () => {
 					<Button
 						type="submit"
 						variant="contained"
-						color="primary"
-						fullWidth
+						sx={{
+							mt: 2,
+							backgroundColor: '#4caf50',
+							color: 'white',
+							'&:hover': { backgroundColor: '#45a049' },
+						}}
 					>
-						Create an account
+						Register
 					</Button>
 					<p className="text-sm font-light text-gray-500 dark:text-gray-400">
-						Already have an account? <Link to="/login">Login here</Link>
+						Already have an account?{' '}
+						<Link to="/login" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
+							Login here
+						</Link>
 					</p>
 				</form>
 			</div>

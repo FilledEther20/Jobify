@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const jobRoutes = require('./controllers/Jobs');
+const authRouter=require("./routes/authRoute");
 require('dotenv').config();
 
 const app = express();
@@ -9,7 +11,8 @@ const PORT = process.env.PORT;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+app.use('/', jobRoutes);
+app.use('/api',authRouter);
 // MongoDB Connection
 const URI = process.env.URL;
 
@@ -22,15 +25,11 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
 	console.error(`MongoDB connection error: ${err}`);
 });
-
-const jobRoutes = require('./controllers/Jobs');
-const candidateRoutes=require('./controllers/Candidate')
 //addJob route
-app.use('/', jobRoutes);
-app.use('/',candidateRoutes)
 app.get('/', (req, res) => {
 	res.send('HI asde');
 });
+
 
 app.use((err, req, res, next) => {
 	console.error(err.stack);

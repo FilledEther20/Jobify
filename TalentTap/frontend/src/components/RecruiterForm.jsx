@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {
@@ -7,8 +7,10 @@ import {
 	InputLabel,
 	OutlinedInput,
 } from '@mui/material';
-
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 const RecruiterForm = () => {
+	const [phone,setPhone]=useState();
 	const navigate = useNavigate();
 	const [recruiterInfo, setRecruiterInfo] = useState({
 		name: '',
@@ -25,7 +27,7 @@ const RecruiterForm = () => {
 		const recruiterData = {
 			name: data.get('name'),
 			email: data.get('email'),
-			phone: data.get('phone-number'),
+			phone: phone,
 			company: data.get('company'),
 			position: data.get('position'),
 			bio: data.get('bio'),
@@ -34,6 +36,7 @@ const RecruiterForm = () => {
 		};
 		console.log(recruiterData);
 		// Submit recruiterData to the backend
+		
 		navigate('/home');
 	};
 
@@ -91,14 +94,10 @@ const RecruiterForm = () => {
 						>
 							Phone Number
 						</label>
-						<input
-							type="text"
-							name="phone-number"
-							id="phone-number"
-							className="input-field"
+						<PhoneInput
 							placeholder="123-456-7890"
-							value={recruiterInfo.phoneNumber}
-							onChange={handleChange}
+							value={phone}
+							onChange={setPhone}
 							required
 						/>
 					</div>

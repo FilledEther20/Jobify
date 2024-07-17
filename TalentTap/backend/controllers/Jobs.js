@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Job = require('../models/Job');
-
 // Fetch all Jobs from db
 router.get('/alljobs', async (req, res, next) => {
   try {

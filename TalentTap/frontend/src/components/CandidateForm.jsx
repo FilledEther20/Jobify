@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {
@@ -17,9 +17,10 @@ import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Login from './Login';
+import { UserContext } from '../Context/UserContext';
 
 const CandidateForm = () => {
+	const { setIsAuthenticated } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [education, setEducation] = useState({
 		degree: '',
@@ -50,11 +51,11 @@ const CandidateForm = () => {
 				yearOfCompletion: data.get('yearOfCompletion'),
 			},
 			skills: skills,
-			password: data.get('password'),
+			password: data.get('password').toString(),
 		};
 
 		if (data.get('password') !== data.get('confirm-password')) {
-			toast.error("Password confirmation does not match", {
+			toast.error('Password confirmation does not match', {
 				position: 'top-center',
 				autoClose: 3000,
 			});
@@ -64,14 +65,22 @@ const CandidateForm = () => {
 		try {
 			const res = await axios.post(`${BaseURL}/api/signup`, candidateData);
 			if (res.status === 201) {
-				toast.success("Welcome!", {
+				setIsAuthenticated(true);
+				toast.success('Registration successful!', {
 					position: 'top-center',
-					autoClose: 4000,
+					autoClose: 3000,
 				});
-				navigate('/home');
+				setTimeout(() => {
+					navigate('/home');
+				}, 3000);
+			} else {
+				toast.error('Registration failed', {
+					position: 'top-center',
+					autoClose: 3000,
+				});
 			}
 		} catch (error) {
-			toast.error('User With Email already Exists', {
+			toast.error('User with this email already exists', {
 				position: 'top-center',
 				autoClose: 3000,
 			});
@@ -95,7 +104,10 @@ const CandidateForm = () => {
 		<div className="w-full bg-white flex items-center justify-center h-full rounded-lg shadow dark:border md:mt-40 sm:max-w-sm lg:p-0 dark:bg-gray-800 dark:border-gray-700">
 			<div className="max-w-md p-6 space-y-4 md:space-y-6 sm:p-8 h-full">
 				<ToastContainer />
-				<form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+				<form
+					className="space-y-4 md:space-y-6"
+					onSubmit={handleSubmit}
+				>
 					<div className="max-w-md w-full">
 						<label
 							htmlFor="name"
@@ -136,7 +148,7 @@ const CandidateForm = () => {
 							Phone Number
 						</label>
 						<PhoneInput
-							defaultCountry="US"
+							defaultCountry="IN"
 							value={phone}
 							onChange={setPhone}
 							placeholder="123-456-7890"
@@ -199,7 +211,10 @@ const CandidateForm = () => {
 					</div>
 					<div>
 						<FormControl fullWidth>
-							<InputLabel id="skills-label" sx={{ color: 'white' }}>
+							<InputLabel
+								id="skills-label"
+								sx={{ color: 'white' }}
+							>
 								Skills
 							</InputLabel>
 							<Select
@@ -208,17 +223,30 @@ const CandidateForm = () => {
 								multiple
 								value={skills}
 								onChange={handleSkillsChange}
-								input={<OutlinedInput id="select-multiple-chip" label="Skills" />}
+								input={
+									<OutlinedInput
+										id="select-multiple-chip"
+										label="Skills"
+									/>
+								}
 								renderValue={(selected) => (
-									<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+									<Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
 										{selected.map((value) => (
-											<Chip key={value} label={value} />
+											<Chip
+												key={value}
+												label={value}
+												sx={{ m: 0.5 }}
+											/>
 										))}
 									</Box>
 								)}
+								required
 							>
 								{skillOptions.map((skill) => (
-									<MenuItem key={skill} value={skill}>
+									<MenuItem
+										key={skill}
+										value={skill}
+									>
 										{skill}
 									</MenuItem>
 								))}
@@ -236,8 +264,8 @@ const CandidateForm = () => {
 							type="password"
 							name="password"
 							id="password"
-							placeholder="••••••••"
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="••••••••"
 							required
 						/>
 					</div>
@@ -252,27 +280,26 @@ const CandidateForm = () => {
 							type="password"
 							name="confirm-password"
 							id="confirm-password"
-							placeholder="••••••••"
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="••••••••"
 							required
 						/>
 					</div>
 					<Button
 						type="submit"
 						variant="contained"
-						sx={{
-							mt: 2,
-							backgroundColor: '#4caf50',
-							color: 'white',
-							'&:hover': { backgroundColor: '#45a049' },
-						}}
+						color="primary"
+						fullWidth
 					>
-						Register
+						Sign Up
 					</Button>
 					<p className="text-sm font-light text-gray-500 dark:text-gray-400">
 						Already have an account?{' '}
-						<Link to="/login" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-							Login here
+						<Link
+							to="/login"
+							className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+						>
+							Log in
 						</Link>
 					</p>
 				</form>

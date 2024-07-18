@@ -3,7 +3,7 @@ const express = require('express');
 const Candidate = require('../models/Candidate');
 const authRouter = express.Router();
 require('dotenv').config();
-const bcrypt=require("bcrypt")
+const bcrypt = require('bcrypt');
 //Signup Route defined
 authRouter.post('/signup', async (req, res) => {
 	const { name, email, phone, education, skills, password } = req.body;
@@ -15,7 +15,7 @@ authRouter.post('/signup', async (req, res) => {
 			return res.status(400).json({ error: 'Email already exists' });
 		}
 		// Hash the password
-		const hashedPassword = await bcrypt.hash(password, 10);
+		const hashedPassword = await bcrypt.hash(password.toString(), 10);
 		// Create a new user instance using your User model
 		const newUser = new Candidate({
 			name,
@@ -42,20 +42,22 @@ authRouter.post('/signup', async (req, res) => {
 });
 //Login route defined
 authRouter.post('/login', async (req, res) => {
-	const { email, password } = req.body;
+	const { email, password} = req.body;
+	console.log(password.toString());
 	try {
 		const user = await Candidate.findOne({ email });
-		const passwordCorrect =
-			user === null ? false : await bcrypt.compare(password, user.password);
-
-		if (!(user && passwordCorrect)) {
-			return res.status(401).json({
-				error: 'invalid email or password',
-			});
+		console.log(user.name)
+		if (!user) {
+			return res.status(401).json({ error: 'invalid email or password' });
+		}
+		const passwordCorrect = await bcrypt.compare(password.toString(), user.password);
+		console.log(user.password)
+		console.log(passwordCorrect)
+		console.log(password)
+		if (!passwordCorrect) {
+			return res.status(401).json({ error: 'invalid email or password' });
 		}
 
-		// If the email and password are valid, assign a token
-		// Assign by email due to its unique existence
 		const userForToken = {
 			email: user.email,
 			id: user._id,
@@ -71,5 +73,4 @@ authRouter.post('/login', async (req, res) => {
 		res.status(500).json({ error: 'Something went wrong during login' });
 	}
 });
-
 module.exports = authRouter;

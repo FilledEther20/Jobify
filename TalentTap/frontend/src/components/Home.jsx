@@ -3,11 +3,11 @@ import Banner from './Banner';
 import HomeCards from './HomeCards';
 import JobListings from './JobListings';
 import React from 'react';
-
-const Home = () => {
+import { toast } from 'react-toastify';
+const Home = (user) => {
     return (
-		<>
-			<Navbar />
+		<>	
+			<Navbar/>
 			<Banner />
 			<HomeCards />
 			<JobListings />
